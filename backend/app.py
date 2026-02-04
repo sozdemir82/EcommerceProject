@@ -1,57 +1,96 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app) # Enables Cross-Origin Resource Sharing for React frontend
+CORS(app)  # Enable CORS to allow requests from React frontend
 
-# --- DATABASE CONFIGURATION ---
-# Using SQLite for development. The database file will be 'ecommerce.db'
+# Database Configuration (SQLite)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 
-# --- OOP MODELS (Database Schema) ---
+# --- MODELS (OOP Structure with SQLAlchemy) ---
 
 class Category(db.Model):
-    """Represents a product category (e.g., Electronics, Books)"""
+    """Category model to organize products like Electronics, Fashion, etc."""
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False, unique=True)
-    # Relationship: One category can have multiple products
+    name = db.Column(db.String(50), unique=True, nullable=False)
     products = db.relationship('Product', backref='category', lazy=True)
 
+    def to_dict(self):
+        """Convert Category object to dictionary for JSON responses"""
+        return {"id": self.id, "name": self.name}
+
 class Product(db.Model):
-    """Represents a single Product in the store"""
+    """Product model representing individual items in the store"""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text)
+    description = db.Column(db.Text, nullable=True)
     price = db.Column(db.Float, nullable=False)
-    stock = db.Column(db.Integer, default=0)
-    # Foreign Key: Connects product to a specific category
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
 
-# --- API ROUTES ---
+    def to_dict(self):
+        """Convert Product object to dictionary for JSON responses"""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "price": self.price,
+            "category_id": self.category_id
+        }
+
+# --- DATABASE SEEDING (Initial Data Setup) ---
+
+def seed_database():
+    """Seeds the database with initial categories and products if it's empty"""
+    if Category.query.first() is None:
+        print("Seeding database with sample data...")
+        
+        # 1. Create Categories
+        electronics = Category(name="Electronics")
+        fashion = Category(name="Fashion")
+        home = Category(name="Home & Garden")
+        
+        db.session.add_all([electronics, fashion, home])
+        db.session.commit() # Commit to generate IDs for relationships
+
+        # 2. Create Sample Products
+        sample_products = [
+            Product(name="Wireless Headphones", description="Noise-canceling Bluetooth headphones", price=199.99, category_id=electronics.id),
+            Product(name="Smartphone X", description="6.7 inch OLED display, 128GB", price=999.00, category_id=electronics.id),
+            Product(name="Cotton T-Shirt", description="Organic cotton, slim fit", price=29.50, category_id=fashion.id),
+            Product(name="Modern Coffee Table", description="Minimalist wooden design", price=145.00, category_id=home.id)
+        ]
+        
+        db.session.add_all(sample_products)
+        db.session.commit()
+        print("Database seeded successfully!")
+
+# --- ROUTES (RESTful API Endpoints) ---
 
 @app.route('/')
-def health_check():
-    """Simple route to verify if the server is running"""
-    return {"status": "success", "message": "Backend is running successfully!"}
+def home():
+    """Health check endpoint to ensure backend is running"""
+    return jsonify({"message": "Backend is running successfully!", "status": "success"})
 
-@app.route('/api/products', methods=['GET'])
+@app.route('/products', methods=['GET'])
 def get_products():
-    """Fetches all products from the database and returns them as JSON"""
+    """Retrieve all products from the database"""
     products = Product.query.all()
-    # Converting OOP objects into a list of dictionaries (JSON format)
-    return jsonify([{
-        "id": p.id,
-        "name": p.name,
-        "price": p.price,
-        "category": p.category.name,
-        "stock": p.stock
-    } for p in products])
+    return jsonify([p.to_dict() for p in products])
+
+@app.route('/categories', methods=['GET'])
+def get_categories():
+    """Retrieve all categories from the database"""
+    categories = Category.query.all()
+    return jsonify([c.to_dict() for c in categories])
+
+# --- SERVER STARTUP ---
 
 if __name__ == '__main__':
     with app.app_context():
-        # This command creates the database file and tables based on the classes above
-        db.create_all()
+        db.create_all()  # Initialize database tables
+        seed_database()  # Populate with initial data if needed
     app.run(debug=True, port=5000)
