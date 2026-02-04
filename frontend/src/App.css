@@ -1,10 +1,22 @@
 :root {
   --bg-color: #ffffff;
   --text-main: #1a1a1a;
-  --text-muted: #757575;
+  --text-muted: #8e8e93;
   --accent: #000000;
   --card-bg: #f5f5f7;
+  /* Kırık beyaz tonları */
+  --nav-bg: #fcfcfc;
+  --footer-bg: #f9f9f9;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
 }
 
 .app-container {
@@ -14,102 +26,107 @@
   padding: 0 40px;
 }
 
-/* --- NAVIGATION & HERO --- */
+/* --- NAVBAR (STIKY & OFF-WHITE) --- */
 .navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.nav-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 18px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px 0;
 }
 
-.hero { padding: 60px 0; text-align: center; }
-.hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; }
+.logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -1.5px; text-transform: uppercase; }
+.logo span { font-weight: 300; color: var(--text-muted); }
 
-/* --- PRODUCT GRID --- */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); 
-  gap: 30px;
-  width: 100%;
+.nav-links { display: flex; gap: 40px; align-items: center; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+.cart-container { position: relative; cursor: pointer; }
+.cart-badge {
+  position: absolute; top: -8px; right: -10px;
+  background: var(--accent); color: white;
+  font-size: 0.65rem; padding: 2px 6px; border-radius: 50%;
 }
 
-/* --- PRODUCT CARD --- */
-.product-card {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
+/* --- HERO & GRID --- */
+.hero { padding: 100px 0 60px 0; text-align: center; }
+.hero h1 { font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 800; letter-spacing: -3px; }
+.hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 550px; margin: 15px auto 0; }
 
+.product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 35px; margin-bottom: 80px; }
+
+/* --- PRODUCT CARD (IPHONE SAFE) --- */
+.product-card { display: flex; flex-direction: column; }
 .image-container {
-  position: relative;
-  background-color: var(--card-bg);
-  border-radius: 24px;
-  aspect-ratio: 1 / 1.2;
-  overflow: hidden;
-  margin-bottom: 15px;
-  
-  /* BUTONU EN ALTA VE ORTAYA İTMEK İÇİN */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end; /* İçeriği alta yasla */
-  align-items: center;      /* İçeriği yatayda ortala */
-  padding-bottom: 20px;     /* Butonun alttan boşluğu */
+  position: relative; background-color: var(--card-bg); border-radius: 28px;
+  aspect-ratio: 1 / 1.25; overflow: hidden; margin-bottom: 20px;
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 20px;
 }
+.placeholder-img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem; font-weight: 800; color: #e8e8e8; }
 
-.placeholder-img {
-  position: absolute; /* Harfi merkeze çiviler */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 4rem;
-  font-weight: 800;
-  color: #e0e0e0;
-}
-
-/* --- QUICK ADD BUTTON (HİÇBİR CİHAZDA KAYMAZ) --- */
 .quick-add {
-  position: relative; /* Absolute değil, Flex içinde davranır */
-  width: 85%;         /* Kutunun %85'ini kaplar, otomatik yan boşluk oluşur */
-  background: var(--accent);
-  color: white;
+  position: relative; 
+  width: 88%; 
+  background: var(--accent); 
+  color: white; 
   border: none;
-  padding: 14px 0;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  padding: 15px 0; 
+  border-radius: 16px; 
+  font-weight: 600; 
+  font-family: inherit;
+  font-size: 0.8rem; 
+  text-transform: uppercase; 
   cursor: pointer;
-  
-  /* Masaüstünde hover efekti */
-  opacity: 0;
-  transform: translateY(20px);
+  opacity: 0; 
+  transform: translateY(20px); 
   transition: var(--transition);
-  z-index: 10;
+}
+.product-card:hover .quick-add { opacity: 1; transform: translateY(0); }
+
+/* --- FOOTER (LIGHT GREY) --- */
+.footer {
+  background-color: var(--footer-bg);
+  padding: 80px 0 40px 0;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  width: 100vw;
 }
 
-.product-card:hover .quick-add {
-  opacity: 1;
-  transform: translateY(0);
+.footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 50px;
+  margin-bottom: 60px;
 }
 
-/* --- RESPONSIVE (IPHONE & TABLET) --- */
-@media (max-width: 1100px) {
-  .product-grid { grid-template-columns: repeat(3, 1fr); }
-}
+.footer-section h4 { font-size: 0.85rem; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
+.footer-section p, .footer-section span { color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 12px; cursor: pointer; }
 
+.subscribe { display: flex; border-bottom: 1px solid var(--accent); padding-bottom: 5px; max-width: 300px; }
+.subscribe input { border: none; background: transparent; outline: none; padding: 5px 0; width: 100%; font-family: inherit; }
+.subscribe button { border: none; background: none; font-size: 1.2rem; cursor: pointer; }
+
+.footer-bottom { text-align: center; color: #bbb; font-size: 0.75rem; letter-spacing: 0.5px; border-top: 1px solid rgba(0,0,0,0.03); padding-top: 30px; }
+
+/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
   .app-container { padding: 0 20px; }
+  .footer-content { grid-template-columns: 1fr; text-align: center; padding: 0 20px; }
+  .subscribe { margin: 0 auto; }
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-  
-  .quick-add {
-    opacity: 1;           /* Mobilde her zaman görünür */
-    transform: none;      /* Mobilde hareket etmez, sabit durur */
-    width: 90%;           /* Mobilde biraz daha geniş durabilir */
-  }
+  .quick-add { opacity: 1; transform: none; width: 92%; }
 }
-
-@media (max-width: 480px) {
-  .product-grid { grid-template-columns: 1fr; }
-}
-
-.product-details h3 { font-size: 1rem; font-weight: 600; }
-.price { font-weight: 700; }
