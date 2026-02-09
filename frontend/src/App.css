@@ -1,167 +1,79 @@
-/* MINIMALIST SHOP - CSS DESIGN SYSTEM
-  Contains: Sticky Footer Logic, Mobile Compatibility, and Premium Color Palette
-*/
-
-:root {
-  --bg-color: #ffffff;
-  --text-main: #1a1a1a;
-  --text-muted: #8e8e93;
-  --accent: #000000;
-  --card-bg: #f5f5f7;
-  /* Specific tones for UI elements to ensure visibility */
-  --nav-bg: #f5f5f7; 
-  --footer-bg: #f1f1f1; 
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* Sticky Footer Implementation:
-  Forces the layout to take full screen height and pushes footer to bottom
-*/
-.layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.main-content {
-  flex: 1; /* Absorbs available space to keep footer at bottom */
+/* General Resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Montserrat', sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
+  font-family: 'Inter', sans-serif;
+  background-color: #fff;
+  color: #333;
 }
 
-/* --- NAVIGATION STYLES --- */
-.navbar {
-  width: 100%;
-  background-color: var(--nav-bg);
-  position: sticky; /* Stays at top while scrolling */
-  top: 0;
-  z-index: 1000;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-}
-
-.nav-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 18px 40px;
+/* Page Layout */
+.App {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  min-height: 100vh; /* Keeps footer at the bottom */
 }
 
-.logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -1.5px; text-transform: uppercase; }
-.logo span { font-weight: 300; color: var(--text-muted); }
-
-.nav-links { display: flex; gap: 40px; align-items: center; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; }
-
-.cart-container { position: relative; cursor: pointer; }
-.cart-badge {
-  position: absolute; top: -8px; right: -10px;
-  background: var(--accent); color: white;
-  font-size: 0.65rem; padding: 2px 6px; border-radius: 50%;
-}
-
-/* --- CONTENT CONTAINER --- */
-.app-container {
-  max-width: 1400px;
+/* Centered Container */
+.container {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 40px;
-}
-
-.hero { padding: 100px 0 60px 0; text-align: center; }
-.hero h1 { font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 800; letter-spacing: -3px; }
-
-/* --- PRODUCT GRID --- */
-.product-grid { 
-  display: grid; 
-  grid-template-columns: repeat(4, 1fr); 
-  gap: 35px; 
-  margin-bottom: 80px; 
-}
-
-/* --- PRODUCT CARD & IPHONE CENTERING --- */
-.product-card { display: flex; flex-direction: column; }
-
-.image-container {
-  position: relative; 
-  background-color: var(--card-bg); 
-  border-radius: 28px;
-  aspect-ratio: 1 / 1.25; 
-  overflow: hidden; 
-  margin-bottom: 20px;
-  /* Flex settings ensure button and icon stay centered */
-  display: flex; 
-  flex-direction: column; 
-  justify-content: flex-end; 
-  align-items: center; 
-  padding-bottom: 20px;
-}
-
-.placeholder-img { 
-  position: absolute; top: 50%; left: 50%; 
-  transform: translate(-50%, -50%); 
-  font-size: 5rem; font-weight: 800; color: #e8e8e8; 
-}
-
-/* Quick Add Button: Uses relative position inside flex container for perfect centering */
-.quick-add {
-  position: relative; 
-  width: 88%; 
-  background: var(--accent); 
-  color: white; 
-  border: none;
-  padding: 15px 0; 
-  border-radius: 16px; 
-  font-weight: 600; 
-  font-family: inherit;
-  font-size: 0.8rem; 
-  text-transform: uppercase; 
-  cursor: pointer;
-  opacity: 0; 
-  transform: translateY(20px); 
-  transition: var(--transition);
-}
-
-.product-card:hover .quick-add { opacity: 1; transform: translateY(0); }
-
-/* --- FOOTER STYLES --- */
-.footer {
+  padding: 0 2rem;
   width: 100%;
-  background-color: var(--footer-bg);
-  padding: 80px 0 40px 0;
-  border-top: 1px solid rgba(0,0,0,0.1);
+  flex: 1; /* Allows content to expand */
 }
 
-.footer-inner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 40px;
+/* Hero Section */
+.hero-section {
+  text-align: center;
+  padding: 5rem 1rem;
+  background-color: #f9f9f9;
+  margin-bottom: 3rem;
+}
+
+.hero-section h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+/* Product Grid */
+.product-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 60px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 5rem;
 }
 
-.footer-section h4 { font-size: 0.85rem; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
-.footer-section p, .footer-section span { color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 12px; }
+/* Loading State */
+.loading-state {
+  text-align: center;
+  padding: 5rem;
+  font-size: 1.2rem;
+  color: #666;
+}
 
-.subscribe { display: flex; border-bottom: 1px solid var(--accent); padding-bottom: 5px; max-width: 300px; }
-.subscribe input { border: none; background: transparent; outline: none; padding: 5px 0; width: 100%; font-family: inherit; }
-.subscribe button { border: none; background: none; font-size: 1.2rem; cursor: pointer; }
+/* Footer Styling */
+.footer {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 4rem 0;
+  margin-top: auto;
+}
 
-.footer-bottom { text-align: center; color: #bbb; font-size: 0.75rem; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 40px; padding-top: 30px; }
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
 
-/* --- RESPONSIVE ADJUSTMENTS --- */
-@media (max-width: 768px) {
-  .nav-content, .app-container, .footer-inner { padding: 0 20px; }
-  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-  .footer-inner { grid-template-columns: 1fr; text-align: center; gap: 40px; }
-  .subscribe { margin: 0 auto; }
-  /* Show buttons by default on touch devices */
-  .quick-add { opacity: 1; transform: none; width: 92%; }
+.footer-container p {
+  margin-bottom: 0.5rem;
 }
