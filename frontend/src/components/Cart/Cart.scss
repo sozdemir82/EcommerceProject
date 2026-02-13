@@ -1,0 +1,127 @@
+@use "../../variables" as vars;
+@use "sass:color";
+
+/* Cart Page Container */
+.cart-page {
+  padding: 2rem 0;
+
+  h2 {
+    margin-bottom: 2rem;
+    color: vars.$primary-color;
+    text-align: center;
+    font-size: 2rem;
+  }
+
+  .empty-msg {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 3rem;
+  }
+}
+
+/* Cart Items Layout */
+.cart-container {
+  display: grid;
+  grid-template-columns: 1fr 350px; // Main list and Summary sidebar
+  gap: 2rem;
+  align-items: start;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cart-list {
+  list-style: none;
+  background: white;
+  border-radius: vars.$border-radius;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+
+  .cart-item {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+    transition: background-color vars.$transition-fast;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: #fafafa;
+    }
+
+    img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: calc(vars.$border-radius / 2);
+      margin-right: 1.5rem;
+    }
+
+    .item-details {
+      flex-grow: 1;
+
+      h4 {
+        margin-bottom: 0.25rem;
+        color: vars.$secondary-color;
+      }
+
+      p {
+        font-weight: bold;
+        color: vars.$success-color;
+      }
+    }
+
+    .remove-btn {
+      background: none;
+      border: 1px solid #ff4d4d;
+      color: #ff4d4d;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all vars.$transition-fast;
+
+      &:hover {
+        background-color: #ff4d4d;
+        color: white;
+      }
+    }
+  }
+}
+
+/* Cart Summary Sidebar */
+.cart-summary {
+  background: white;
+  padding: 2rem;
+  border-radius: vars.$border-radius;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
+
+  h3 {
+    margin-bottom: 1.5rem;
+    color: vars.$primary-color;
+    font-size: 1.5rem;
+  }
+
+  .checkout-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: vars.$success-color;
+    color: white;
+    border: none;
+    border-radius: vars.$border-radius;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color vars.$transition-fast;
+
+    &:hover {
+      background-color: color.adjust(vars.$success-color, $lightness: -10%);
+    }
+  }
+}

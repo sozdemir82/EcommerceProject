@@ -1,24 +1,26 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./Navbar.scss";
 
 /**
  * Navbar Component
- * Receives cartCount as a prop to display items in the cart dynamically.
+ * Features Link components for seamless client-side navigation.
  */
 const Navbar = ({ cartCount }) => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="brand">
-          <a href="/">E-COMMERCE</a>
+          <Link to="/">E-COMMERCE</Link>
         </div>
         <ul className="nav-menu">
-          <li><a href="/">Home</a></li>
-          <li><a href="/products">Products</a></li>
           <li>
-            <a href="/cart" className="cart-link">
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/cart" className="cart-link">
               Cart <span className="cart-count">({cartCount})</span>
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

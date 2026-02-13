@@ -1,20 +1,22 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import ProductCard from "./components/ProductCard/ProductCard";
+import Cart from "./components/Cart/Cart";
 import { getProducts } from "./services/api";
 import "./App.scss";
 
 /**
- * Main Application Component
- * Manages products fetching and cart state globally.
+ * Main Application with Routing
+ * Handles global state for products and shopping cart.
  */
 function App() {
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]); // Cart items storage
+  const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch products from API on mount
+  // Load products from backend
   useEffect(() => {
     const fetchProductsData = async () => {
       try {
@@ -22,8 +24,8 @@ function App() {
         const data = await getProducts();
         setProducts(data);
       } catch (err) {
-        console.error("API Error:", err);
-        setError("Could not load products. Check backend.");
+        console.error("Fetch error:", err);
+        setError("Could not load products.");
       } finally {
         setLoading(false);
       }
@@ -31,38 +33,52 @@ function App() {
     fetchProductsData();
   }, []);
 
-  /**
-   * Adds a selected product to the cart state
-   * @param {Object} product - The product to be added
-   */
+  // Add item to cart
   const addToCart = (product) => {
     setCart((prevCart) => [...prevCart, product]);
   };
 
+  // Remove item from cart by its index
+  const removeFromCart = (indexToRemove) => {
+    setCart((prevCart) => prevCart.filter((_, index) => index !== indexToRemove));
+  };
+
   return (
-    <div className="App">
-      {/* Pass the dynamic cart length to Navbar */}
-      <Navbar cartCount={cart.length} />
-      
-      <main className="container">
-        <h1>Our Premium Products</h1>
+    <Router>
+      <div className="App">
+        {/* Pass cart size to Navbar */}
+        <Navbar cartCount={cart.length} />
+        
+        <main className="container">
+          <Routes>
+            {/* Home Route: Shows Product Grid */}
+            <Route path="/" element={
+              <>
+                <h1>Premium Collection</h1>
+                {loading && <p className="status-message">Loading...</p>}
+                {error && <p className="error-message">{error}</p>}
+                {!loading && !error && (
+                  <div className="product-grid">
+                    {products.map((product) => (
+                      <ProductCard 
+                        key={product.id} 
+                        product={product} 
+                        onAddToCart={addToCart} 
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            } />
 
-        {loading && <p className="status-message">Loading...</p>}
-        {error && <p className="error-message">{error}</p>}
-
-        {!loading && !error && (
-          <div className="product-grid">
-            {products.map((product) => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-                onAddToCart={addToCart} // Correctly passing the function
-              />
-            ))}
-          </div>
-        )}
-      </main>
-    </div>
+            {/* Cart Route: Shows Cart Details */}
+            <Route path="/cart" element={
+              <Cart cartItems={cart} onRemoveFromCart={removeFromCart} />
+            } />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 
