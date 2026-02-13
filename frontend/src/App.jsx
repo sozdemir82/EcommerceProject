@@ -7,16 +7,31 @@ import { getProducts } from "./services/api";
 import "./App.scss";
 
 /**
- * Main Application with Routing
- * Handles global state for products and shopping cart.
+ * Main Application Component
+ * Manages global state with LocalStorage persistence.
  */
 function App() {
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
+  
+  // Initialize cart from LocalStorage if available, otherwise empty array
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem("shopping_cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Load products from backend
+  /**
+   * Sync cart state with LocalStorage whenever it changes
+   */
+  useEffect(() => {
+    localStorage.setItem("shopping_cart", JSON.stringify(cart));
+  }, [cart]);
+
+  /**
+   * Fetch products on component mount
+   */
   useEffect(() => {
     const fetchProductsData = async () => {
       try {
@@ -33,12 +48,10 @@ function App() {
     fetchProductsData();
   }, []);
 
-  // Add item to cart
   const addToCart = (product) => {
     setCart((prevCart) => [...prevCart, product]);
   };
 
-  // Remove item from cart by its index
   const removeFromCart = (indexToRemove) => {
     setCart((prevCart) => prevCart.filter((_, index) => index !== indexToRemove));
   };
@@ -46,16 +59,14 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {/* Pass cart size to Navbar */}
         <Navbar cartCount={cart.length} />
         
         <main className="container">
           <Routes>
-            {/* Home Route: Shows Product Grid */}
             <Route path="/" element={
               <>
                 <h1>Premium Collection</h1>
-                {loading && <p className="status-message">Loading...</p>}
+                {loading && <p className="status-message">Loading products...</p>}
                 {error && <p className="error-message">{error}</p>}
                 {!loading && !error && (
                   <div className="product-grid">
@@ -71,7 +82,6 @@ function App() {
               </>
             } />
 
-            {/* Cart Route: Shows Cart Details */}
             <Route path="/cart" element={
               <Cart cartItems={cart} onRemoveFromCart={removeFromCart} />
             } />
