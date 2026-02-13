@@ -1,70 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from './components/Navbar/Navbar';
-import ProductCard from './components/ProductCard/ProductCard';
-import { getProducts } from './services/api';
-import './App.css';
+import { useState, useEffect } from "react";
+import Navbar from "./components/Navbar/Navbar";
+import ProductCard from "./components/ProductCard/ProductCard";
+import { getProducts } from "./services/api";
+import "./App.scss"; // Updated to use SCSS
 
 function App() {
   const [products, setProducts] = useState([]);
-  const [cartCount, setCartCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Initialize data fetching from backend on component mount
+  /**
+   * Fetch products from the backend API on component mount
+   */
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
+    const fetchProductsData = async () => {
       try {
+        setLoading(true);
         const data = await getProducts();
         setProducts(data);
-      } catch (error) {
-        console.error("Application Error: Failed to load products.", error);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+        setError("Could not load products. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
-  }, []);
 
-  /**
-   * Handles the add to cart logic and updates global state.
-   */
-  const handleAddToCart = (product) => {
-    setCartCount(prev => prev + 1);
-    console.log(`Professional Log: ${product.name} added to cart.`);
-  };
+    fetchProductsData();
+  }, []);
 
   return (
     <div className="App">
-      <Navbar cartCount={cartCount} />
+      <Navbar />
       
-      <header className="hero-section">
-        <h1>Essential Collection 2026</h1>
-        <p>Future designs met with today's comfort.</p>
-      </header>
-
-      {/* Main content wrapper for responsive alignment */}
       <main className="container">
-        {loading ? (
-          <div className="loading-state">Synchronizing with server...</div>
-        ) : (
+        <h1>Our Products</h1>
+
+        {loading && <p className="status-message">Loading products...</p>}
+        {error && <p className="error-message">{error}</p>}
+
+        {!loading && !error && (
           <div className="product-grid">
-            {products.map(product => (
+            {products.map((product) => (
               <ProductCard 
                 key={product.id} 
                 product={product} 
-                onAddToCart={handleAddToCart} 
+                // We will add the addToCart prop here in the next step
               />
             ))}
           </div>
         )}
       </main>
-
-      <footer className="footer">
-        <div className="footer-container">
-          <p>&copy; 2026 Minimalist Shop. All rights reserved.</p>
-          <p>Built with React & Flask - Professional Grade Architecture</p>
-        </div>
-      </footer>
     </div>
   );
 }

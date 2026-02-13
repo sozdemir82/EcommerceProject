@@ -1,0 +1,35 @@
+@use "variables" as vars;
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.App {
+  font-family: vars.$font-main;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  color: vars.$primary-color;
+
+  .container {
+    max-width: vars.$container-width;
+    margin: 0 auto;
+    padding: 2rem;
+    
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+  }
+
+  h1 {
+    text-align: center;
+    color: vars.$primary-color;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+}

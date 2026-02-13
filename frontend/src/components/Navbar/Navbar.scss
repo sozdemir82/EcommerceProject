@@ -1,0 +1,47 @@
+@use "../../variables" as vars;
+
+/* Navigation styling using modern SCSS module system */
+.navbar {
+  background-color: vars.$primary-color;
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+  .navbar-container {
+    max-width: vars.$container-width;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      
+      a {
+        color: white;
+        text-decoration: none;
+      }
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+
+      li {
+        margin-left: 1.5rem;
+
+        a {
+          color: white;
+          text-decoration: none;
+          transition: color vars.$transition-fast;
+
+          &:hover {
+            color: vars.$accent-color;
+          }
+        }
+      }
+    }
+  }
+}
