@@ -1,30 +1,23 @@
 import React from "react";
-import "./Navbar.scss"; // Updated to use SCSS extension
+import "./Navbar.scss";
 
 /**
  * Navbar Component
- * Renders the main navigation bar and branding
+ * Receives cartCount as a prop to display items in the cart dynamically.
  */
-const Navbar = () => {
+const Navbar = ({ cartCount }) => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Brand Logo / Name */}
         <div className="brand">
-          <a href="/">E-COMMERCE STORE</a>
+          <a href="/">E-COMMERCE</a>
         </div>
-
-        {/* Navigation Links */}
         <ul className="nav-menu">
-          <li>
-            <a href="/">Home</a>
-          </li>
-          <li>
-            <a href="/products">Products</a>
-          </li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/products">Products</a></li>
           <li>
             <a href="/cart" className="cart-link">
-              Cart <span className="cart-count">(0)</span>
+              Cart <span className="cart-count">({cartCount})</span>
             </a>
           </li>
         </ul>

@@ -1,9 +1,9 @@
 import React from "react";
-import "./ProductCard.scss"; // Fixed the extension from .css to .scss
+import "./ProductCard.scss";
 
 /**
  * ProductCard Component
- * Displays individual product details and handles 'Add to Cart' action
+ * Handles individual product display and 'Add to Cart' trigger.
  */
 const ProductCard = ({ product, onAddToCart }) => {
   return (
@@ -18,8 +18,8 @@ const ProductCard = ({ product, onAddToCart }) => {
       <div className="card-footer">
         <span className="price">${product.price}</span>
         <button 
-          onClick={() => onAddToCart(product)}
           className="add-to-cart-btn"
+          onClick={() => onAddToCart(product)} // This must match the prop name
         >
           Add to Cart
         </button>
