@@ -6,14 +6,8 @@ import Cart from "./components/Cart/Cart";
 import { getProducts } from "./services/api";
 import "./App.scss";
 
-/**
- * Main Application Component
- * Manages global state with LocalStorage persistence.
- */
 function App() {
   const [products, setProducts] = useState([]);
-  
-  // Initialize cart from LocalStorage if available, otherwise empty array
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem("shopping_cart");
     return savedCart ? JSON.parse(savedCart) : [];
@@ -22,16 +16,10 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  /**
-   * Sync cart state with LocalStorage whenever it changes
-   */
   useEffect(() => {
     localStorage.setItem("shopping_cart", JSON.stringify(cart));
   }, [cart]);
 
-  /**
-   * Fetch products on component mount
-   */
   useEffect(() => {
     const fetchProductsData = async () => {
       try {
@@ -39,8 +27,7 @@ function App() {
         const data = await getProducts();
         setProducts(data);
       } catch (err) {
-        console.error("Fetch error:", err);
-        setError("Could not load products.");
+        setError("Failed to load products.");
       } finally {
         setLoading(false);
       }
@@ -48,42 +35,71 @@ function App() {
     fetchProductsData();
   }, []);
 
+  /**
+   * Professional Cart Logic:
+   * If item exists, increase quantity. If not, add new item with quantity 1.
+   */
   const addToCart = (product) => {
-    setCart((prevCart) => [...prevCart, product]);
+    setCart((prevCart) => {
+      const isItemInCart = prevCart.find((item) => item.id === product.id);
+
+      if (isItemInCart) {
+        return prevCart.map((item) =>
+          item.id === product.id 
+            ? { ...item, quantity: (item.quantity || 1) + 1 } 
+            : item
+        );
+      }
+      return [...prevCart, { ...product, quantity: 1 }];
+    });
   };
 
-  const removeFromCart = (indexToRemove) => {
-    setCart((prevCart) => prevCart.filter((_, index) => index !== indexToRemove));
+  const removeFromCart = (productId) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  };
+
+  /**
+   * Update quantity directly from Cart page
+   */
+  const updateQuantity = (productId, amount) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === productId
+          ? { ...item, quantity: Math.max(1, (item.quantity || 1) + amount) }
+          : item
+      )
+    );
   };
 
   return (
     <Router>
       <div className="App">
-        <Navbar cartCount={cart.length} />
+        {/* Total count now sums all quantities */}
+        <Navbar cartCount={cart.reduce((sum, item) => sum + (item.quantity || 1), 0)} />
         
         <main className="container">
           <Routes>
             <Route path="/" element={
               <>
                 <h1>Premium Collection</h1>
-                {loading && <p className="status-message">Loading products...</p>}
-                {error && <p className="error-message">{error}</p>}
-                {!loading && !error && (
-                  <div className="product-grid">
-                    {products.map((product) => (
-                      <ProductCard 
-                        key={product.id} 
-                        product={product} 
-                        onAddToCart={addToCart} 
-                      />
-                    ))}
-                  </div>
-                )}
+                {loading && <p>Loading...</p>}
+                <div className="product-grid">
+                  {products.map((product) => (
+                    <ProductCard 
+                      key={product.id} 
+                      product={product} 
+                      onAddToCart={addToCart} 
+                    />
+                  ))}
+                </div>
               </>
             } />
-
             <Route path="/cart" element={
-              <Cart cartItems={cart} onRemoveFromCart={removeFromCart} />
+              <Cart 
+                cartItems={cart} 
+                onRemoveFromCart={removeFromCart} 
+                onUpdateQuantity={updateQuantity}
+              />
             } />
           </Routes>
         </main>

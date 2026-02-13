@@ -1,12 +1,11 @@
 import React from "react";
 import "./Cart.scss";
 
-/**
- * Cart Component
- * Displays the list of items added to the shopping cart
- */
-const Cart = ({ cartItems, onRemoveFromCart }) => {
-  const totalPrice = cartItems.reduce((sum, item) => sum + Number(item.price), 0);
+const Cart = ({ cartItems, onRemoveFromCart, onUpdateQuantity }) => {
+  const totalPrice = cartItems.reduce(
+    (sum, item) => sum + Number(item.price) * (item.quantity || 1), 
+    0
+  );
 
   return (
     <div className="cart-page">
@@ -17,16 +16,22 @@ const Cart = ({ cartItems, onRemoveFromCart }) => {
       ) : (
         <div className="cart-container">
           <ul className="cart-list">
-            {cartItems.map((item, index) => (
-              <li key={index} className="cart-item">
+            {cartItems.map((item) => (
+              <li key={item.id} className="cart-item">
                 <img src={item.image_url} alt={item.name} />
                 <div className="item-details">
                   <h4>{item.name}</h4>
                   <p>${item.price}</p>
+                  
+                  <div className="quantity-controls">
+                    <button onClick={() => onUpdateQuantity(item.id, -1)}>-</button>
+                    <span>{item.quantity || 1}</span>
+                    <button onClick={() => onUpdateQuantity(item.id, 1)}>+</button>
+                  </div>
                 </div>
                 <button 
                   className="remove-btn" 
-                  onClick={() => onRemoveFromCart(index)}
+                  onClick={() => onRemoveFromCart(item.id)}
                 >
                   Remove
                 </button>
