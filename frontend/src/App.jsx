@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import ProductCard from "./components/ProductCard/ProductCard";
 import Cart from "./components/Cart/Cart";
+import ProductDetail from "./components/ProductDetail/ProductDetail";
 import { getProducts } from "./services/api";
 import "./App.scss";
 
@@ -12,7 +13,6 @@ function App() {
     const savedCart = localStorage.getItem("shopping_cart");
     return savedCart ? JSON.parse(savedCart) : [];
   });
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,19 +35,12 @@ function App() {
     fetchProductsData();
   }, []);
 
-  /**
-   * Professional Cart Logic:
-   * If item exists, increase quantity. If not, add new item with quantity 1.
-   */
   const addToCart = (product) => {
     setCart((prevCart) => {
       const isItemInCart = prevCart.find((item) => item.id === product.id);
-
       if (isItemInCart) {
         return prevCart.map((item) =>
-          item.id === product.id 
-            ? { ...item, quantity: (item.quantity || 1) + 1 } 
-            : item
+          item.id === product.id ? { ...item, quantity: (item.quantity || 1) + 1 } : item
         );
       }
       return [...prevCart, { ...product, quantity: 1 }];
@@ -58,9 +51,6 @@ function App() {
     setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
   };
 
-  /**
-   * Update quantity directly from Cart page
-   */
   const updateQuantity = (productId, amount) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
@@ -74,32 +64,26 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {/* Total count now sums all quantities */}
         <Navbar cartCount={cart.reduce((sum, item) => sum + (item.quantity || 1), 0)} />
-        
-        <main className="container">
+        <main>
           <Routes>
             <Route path="/" element={
-              <>
+              <div className="container">
                 <h1>Premium Collection</h1>
-                {loading && <p>Loading...</p>}
+                {loading && <p className="status-message">Loading...</p>}
+                {error && <p className="error-message">{error}</p>}
                 <div className="product-grid">
                   {products.map((product) => (
-                    <ProductCard 
-                      key={product.id} 
-                      product={product} 
-                      onAddToCart={addToCart} 
-                    />
+                    <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
                   ))}
                 </div>
-              </>
+              </div>
             } />
             <Route path="/cart" element={
-              <Cart 
-                cartItems={cart} 
-                onRemoveFromCart={removeFromCart} 
-                onUpdateQuantity={updateQuantity}
-              />
+              <Cart cartItems={cart} onRemoveFromCart={removeFromCart} onUpdateQuantity={updateQuantity} />
+            } />
+            <Route path="/product/:id" element={
+              <ProductDetail onAddToCart={addToCart} />
             } />
           </Routes>
         </main>
