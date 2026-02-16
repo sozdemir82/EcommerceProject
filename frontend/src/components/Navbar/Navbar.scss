@@ -1,9 +1,5 @@
 @use "../../variables" as vars;
 
-/**
- * Navbar Styles
- * High-level navigation styling including logo, search bar, and cart badge.
- */
 .navbar {
   background-color: white;
   padding: 1.2rem 0;
@@ -16,7 +12,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 2rem; // Ensures spacing between logo, search, and links
+    gap: 1.5rem;
   }
 
   .logo {
@@ -24,91 +20,62 @@
     font-weight: 800;
     text-decoration: none;
     color: vars.$secondary-color;
-    letter-spacing: -1px;
-
-    span {
-      color: vars.$primary-color;
-    }
+    span { color: vars.$primary-color; }
   }
 
-  /* Search Bar Container */
   .search-container {
-    flex: 0 1 500px; // Allows search bar to grow up to 500px but shrink if needed
-    position: relative;
-
+    flex: 1;
+    max-width: 400px;
     input {
       width: 100%;
-      padding: 0.7rem 1.5rem;
-      border-radius: 25px;
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
       border: 1px solid #e0e0e0;
-      background-color: #f8f9fa;
-      font-size: 0.95rem;
-      transition: all vars.$transition-fast;
       outline: none;
-
-      &::placeholder {
-        color: #adb5bd;
-      }
-
-      &:focus {
-        background-color: white;
-        border-color: vars.$primary-color;
-        box-shadow: 0 0 0 4px rgba(vars.$primary-color, 0.1);
-      }
+      &:focus { border-color: vars.$primary-color; }
     }
   }
 
   .nav-links {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
     align-items: center;
+
+    .category-select {
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: white;
+      font-weight: 600;
+      color: vars.$secondary-color;
+      cursor: pointer;
+      outline: none;
+
+      &:focus { border-color: vars.$primary-color; }
+    }
 
     .nav-item {
       text-decoration: none;
       color: vars.$secondary-color;
       font-weight: 600;
-      font-size: 1rem;
-      transition: color vars.$transition-fast;
-
-      &:hover {
-        color: vars.$primary-color;
-      }
-
-      &.cart-link {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        position: relative;
-      }
     }
 
-    /* Floating badge for cart item count */
+    .cart-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
     .cart-badge {
       background-color: vars.$primary-color;
       color: white;
       font-size: 0.75rem;
-      font-weight: 700;
       padding: 0.2rem 0.5rem;
       border-radius: 10px;
-      min-width: 20px;
-      text-align: center;
     }
   }
 }
 
-/* Responsive adjustments for mobile devices */
 @media (max-width: 768px) {
-  .navbar {
-    .search-container {
-      display: none; // Search can be moved to a mobile-specific menu or toggle later
-    }
-    
-    .nav-content {
-      gap: 1rem;
-    }
-    
-    .nav-links {
-      gap: 1rem;
-    }
-  }
+  .search-container { display: none; }
 }

@@ -9,34 +9,32 @@ import "./App.scss";
 
 /**
  * App Component
- * The central controller of the application managing products, cart, and search filtering.
+ * Global controller for state management. 
+ * Handles dual-filtering (Search + Category) based on backend data.
  */
 function App() {
-  // Global product list from backend
   const [products, setProducts] = useState([]);
-  
-  // Search term state to filter products globally
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Cart state with lazy initialization from LocalStorage
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  
+  // Initialize cart from LocalStorage
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem("shopping_cart");
     return savedCart ? JSON.parse(savedCart) : [];
   });
-
-  // UI status states
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   /**
-   * Effect: Persist cart to LocalStorage on every cart update
+   * Effect: Persist cart changes to LocalStorage
    */
   useEffect(() => {
     localStorage.setItem("shopping_cart", JSON.stringify(cart));
   }, [cart]);
 
   /**
-   * Effect: Fetch product catalog from API on mount
+   * Effect: Fetch product catalog from the backend API
    */
   useEffect(() => {
     const fetchProductsData = async () => {
@@ -46,7 +44,7 @@ function App() {
         setProducts(data);
       } catch (err) {
         console.error("Fetch Error:", err);
-        setError("Failed to load products. Please check your connection.");
+        setError("Failed to load products. Please check your backend.");
       } finally {
         setLoading(false);
       }
@@ -55,16 +53,22 @@ function App() {
   }, []);
 
   /**
-   * Logic: Filter products based on the search term provided via Navbar
+   * Logic: Extract unique categories directly from product data.
+   * This ensures the UI updates automatically when backend categories change.
    */
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const categories = products.length > 0 
+    ? [...new Set(products.map(p => p.category))].filter(Boolean) 
+    : [];
 
   /**
-   * Function: Add a product to the cart or increment quantity if it exists
-   * @param {Object} product - Product to be added
+   * Logic: Filter products based on search term and selected category.
    */
+  const filteredProducts = products.filter((product) => {
+    const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   const addToCart = (product) => {
     setCart((prevCart) => {
       const isItemInCart = prevCart.find((item) => item.id === product.id);
@@ -77,19 +81,10 @@ function App() {
     });
   };
 
-  /**
-   * Function: Remove an item completely from the cart
-   * @param {number} productId 
-   */
   const removeFromCart = (productId) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
   };
 
-  /**
-   * Function: Update item quantity within the cart (min value: 1)
-   * @param {number} productId 
-   * @param {number} amount 
-   */
   const updateQuantity = (productId, amount) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
@@ -103,23 +98,24 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {/* Pass search state and setter to Navbar */}
         <Navbar 
           cartCount={cart.reduce((sum, item) => sum + (item.quantity || 1), 0)} 
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
         />
         
         <main>
           <Routes>
             <Route path="/" element={
               <div className="container">
-                <h1>Premium Collection</h1>
+                <h1>{selectedCategory === "All" ? "Premium Collection" : selectedCategory}</h1>
                 
                 {loading && <p className="status-message">Loading products...</p>}
                 {error && <p className="error-message">{error}</p>}
                 
-                {/* Product display logic with search results check */}
                 <div className="product-grid">
                   {filteredProducts.length > 0 ? (
                     filteredProducts.map((product) => (
@@ -128,22 +124,16 @@ function App() {
                   ) : (
                     !loading && (
                       <div className="no-results">
-                        <p>No products found matching "<strong>{searchTerm}</strong>"</p>
+                        <p>No products found matching your criteria.</p>
                       </div>
                     )
                   )}
                 </div>
               </div>
             } />
-            
             <Route path="/cart" element={
-              <Cart 
-                cartItems={cart} 
-                onRemoveFromCart={removeFromCart} 
-                onUpdateQuantity={updateQuantity} 
-              />
+              <Cart cartItems={cart} onRemoveFromCart={removeFromCart} onUpdateQuantity={updateQuantity} />
             } />
-            
             <Route path="/product/:id" element={
               <ProductDetail onAddToCart={addToCart} />
             } />

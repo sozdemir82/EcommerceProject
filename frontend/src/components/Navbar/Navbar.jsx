@@ -4,20 +4,28 @@ import "./Navbar.scss";
 
 /**
  * Navbar Component
- * Contains the logo, search bar, and cart navigation.
- * @param {number} cartCount - Total quantity of items in the cart
- * @param {string} searchTerm - Current search input value
- * @param {Function} onSearchChange - Function to handle input changes
+ * @param {number} cartCount - Cart items total
+ * @param {string} searchTerm - Search input state
+ * @param {Function} onSearchChange - Search update handler
+ * @param {Array} categories - Unique list of categories
+ * @param {string} selectedCategory - Currently active category
+ * @param {Function} onCategoryChange - Category update handler
  */
-const Navbar = ({ cartCount, searchTerm, onSearchChange }) => {
+const Navbar = ({ 
+  cartCount, 
+  searchTerm, 
+  onSearchChange, 
+  categories, 
+  selectedCategory, 
+  onCategoryChange 
+}) => {
   return (
     <nav className="navbar">
       <div className="container nav-content">
-        <Link to="/" className="logo">
+        <Link to="/" className="logo" onClick={() => onCategoryChange("All")}>
           PREMIUM<span>STORE</span>
         </Link>
 
-        {/* Search Bar Section */}
         <div className="search-container">
           <input
             type="text"
@@ -28,7 +36,18 @@ const Navbar = ({ cartCount, searchTerm, onSearchChange }) => {
         </div>
 
         <div className="nav-links">
-          <Link to="/" className="nav-item">Shop</Link>
+          {/* Category Filter Dropdown */}
+          <select 
+            className="category-select" 
+            value={selectedCategory} 
+            onChange={(e) => onCategoryChange(e.target.value)}
+          >
+            <option value="All">All Categories</option>
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+
           <Link to="/cart" className="nav-item cart-link">
             Cart
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}

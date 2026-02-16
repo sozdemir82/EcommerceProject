@@ -1,27 +1,38 @@
-const BASE_URL = 'http://127.0.0.1:5000'; 
+const API_URL = "http://127.0.0.1:5000/api"; // URL'in sonuna /api ekledik
 
 /**
- * Fetches the list of products from the backend API.
- * Uses asynchronous fetch with standard error handling.
+ * Fetches all products from the backend API.
+ * @returns {Promise<Array>} List of products
  */
 export const getProducts = async () => {
-    try {
-        const response = await fetch(`${BASE_URL}/products`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP Error! Status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data; 
-        
-    } catch (error) {
-        console.error("API Service Error (getProducts):", error);
-        
-        // Return fallback data to ensure the UI remains functional
-        return [
-            { id: 1, name: "Fallback: Watch", price: 199.99, category: "Essential" },
-            { id: 2, name: "Fallback: Bag", price: 45.00, category: "Essential" }
-        ];
+  try {
+    const response = await fetch(`${API_URL}/products`);
+    if (!response.ok) {
+      throw new Error(`HTTP Error! Status: ${response.status}`);
     }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("API Service Error (getProducts):", error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches a single product by its ID.
+ * @param {string|number} id - Product ID
+ * @returns {Promise<Object>} Product details
+ */
+export const getProductById = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/products/${id}`);
+    if (!response.ok) {
+      throw new Error(`HTTP Error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(`API Service Error (getProductById - ${id}):`, error);
+    throw error;
+  }
 };
