@@ -1,47 +1,114 @@
 @use "../../variables" as vars;
 
-/* Navigation styling using modern SCSS module system */
+/**
+ * Navbar Styles
+ * High-level navigation styling including logo, search bar, and cart badge.
+ */
 .navbar {
-  background-color: vars.$primary-color;
-  color: white;
-  padding: 1rem 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 1.2rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 
-  .navbar-container {
-    max-width: vars.$container-width;
-    margin: 0 auto;
+  .nav-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 2rem;
+    gap: 2rem; // Ensures spacing between logo, search, and links
+  }
 
-    .brand {
-      font-size: 1.5rem;
-      font-weight: bold;
-      
-      a {
-        color: white;
-        text-decoration: none;
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-decoration: none;
+    color: vars.$secondary-color;
+    letter-spacing: -1px;
+
+    span {
+      color: vars.$primary-color;
+    }
+  }
+
+  /* Search Bar Container */
+  .search-container {
+    flex: 0 1 500px; // Allows search bar to grow up to 500px but shrink if needed
+    position: relative;
+
+    input {
+      width: 100%;
+      padding: 0.7rem 1.5rem;
+      border-radius: 25px;
+      border: 1px solid #e0e0e0;
+      background-color: #f8f9fa;
+      font-size: 0.95rem;
+      transition: all vars.$transition-fast;
+      outline: none;
+
+      &::placeholder {
+        color: #adb5bd;
+      }
+
+      &:focus {
+        background-color: white;
+        border-color: vars.$primary-color;
+        box-shadow: 0 0 0 4px rgba(vars.$primary-color, 0.1);
+      }
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+
+    .nav-item {
+      text-decoration: none;
+      color: vars.$secondary-color;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: color vars.$transition-fast;
+
+      &:hover {
+        color: vars.$primary-color;
+      }
+
+      &.cart-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
       }
     }
 
-    .nav-menu {
-      display: flex;
-      list-style: none;
+    /* Floating badge for cart item count */
+    .cart-badge {
+      background-color: vars.$primary-color;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      min-width: 20px;
+      text-align: center;
+    }
+  }
+}
 
-      li {
-        margin-left: 1.5rem;
-
-        a {
-          color: white;
-          text-decoration: none;
-          transition: color vars.$transition-fast;
-
-          &:hover {
-            color: vars.$accent-color;
-          }
-        }
-      }
+/* Responsive adjustments for mobile devices */
+@media (max-width: 768px) {
+  .navbar {
+    .search-container {
+      display: none; // Search can be moved to a mobile-specific menu or toggle later
+    }
+    
+    .nav-content {
+      gap: 1rem;
+    }
+    
+    .nav-links {
+      gap: 1rem;
     }
   }
 }

@@ -9,32 +9,34 @@ import "./App.scss";
 
 /**
  * App Component
- * The central controller of the application managing global state,
- * routing, and persistent storage.
+ * The central controller of the application managing products, cart, and search filtering.
  */
 function App() {
-  // Global state for product list fetched from backend
+  // Global product list from backend
   const [products, setProducts] = useState([]);
   
+  // Search term state to filter products globally
+  const [searchTerm, setSearchTerm] = useState("");
+
   // Cart state with lazy initialization from LocalStorage
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem("shopping_cart");
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
-  // UI States for handling data loading and errors
+  // UI status states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   /**
-   * Effect: Persist cart data to LocalStorage whenever the cart state changes
+   * Effect: Persist cart to LocalStorage on every cart update
    */
   useEffect(() => {
     localStorage.setItem("shopping_cart", JSON.stringify(cart));
   }, [cart]);
 
   /**
-   * Effect: Fetch products from API on initial component mount
+   * Effect: Fetch product catalog from API on mount
    */
   useEffect(() => {
     const fetchProductsData = async () => {
@@ -44,7 +46,7 @@ function App() {
         setProducts(data);
       } catch (err) {
         console.error("Fetch Error:", err);
-        setError("Failed to load products. Please check your backend connection.");
+        setError("Failed to load products. Please check your connection.");
       } finally {
         setLoading(false);
       }
@@ -53,18 +55,22 @@ function App() {
   }, []);
 
   /**
-   * Adds a product to the cart. 
-   * If the product already exists, increments its quantity.
-   * @param {Object} product - The product object to add
+   * Logic: Filter products based on the search term provided via Navbar
+   */
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  /**
+   * Function: Add a product to the cart or increment quantity if it exists
+   * @param {Object} product - Product to be added
    */
   const addToCart = (product) => {
     setCart((prevCart) => {
       const isItemInCart = prevCart.find((item) => item.id === product.id);
       if (isItemInCart) {
         return prevCart.map((item) =>
-          item.id === product.id 
-            ? { ...item, quantity: (item.quantity || 1) + 1 } 
-            : item
+          item.id === product.id ? { ...item, quantity: (item.quantity || 1) + 1 } : item
         );
       }
       return [...prevCart, { ...product, quantity: 1 }];
@@ -72,17 +78,17 @@ function App() {
   };
 
   /**
-   * Removes a specific product from the cart completely
-   * @param {number} productId - ID of the product to be removed
+   * Function: Remove an item completely from the cart
+   * @param {number} productId 
    */
   const removeFromCart = (productId) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
   };
 
   /**
-   * Adjusts the quantity of a product in the cart
-   * @param {number} productId - Target product ID
-   * @param {number} amount - Positive or negative value to change quantity
+   * Function: Update item quantity within the cart (min value: 1)
+   * @param {number} productId 
+   * @param {number} amount 
    */
   const updateQuantity = (productId, amount) => {
     setCart((prevCart) =>
@@ -97,26 +103,39 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {/* Navbar displays total item count (sum of all quantities) */}
-        <Navbar cartCount={cart.reduce((sum, item) => sum + (item.quantity || 1), 0)} />
+        {/* Pass search state and setter to Navbar */}
+        <Navbar 
+          cartCount={cart.reduce((sum, item) => sum + (item.quantity || 1), 0)} 
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+        />
         
         <main>
           <Routes>
-            {/* Home Route: Displays the product catalog */}
             <Route path="/" element={
               <div className="container">
                 <h1>Premium Collection</h1>
-                {loading && <p className="status-message">Fetching latest products...</p>}
+                
+                {loading && <p className="status-message">Loading products...</p>}
                 {error && <p className="error-message">{error}</p>}
+                
+                {/* Product display logic with search results check */}
                 <div className="product-grid">
-                  {products.map((product) => (
-                    <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
-                  ))}
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product) => (
+                      <ProductCard key={product.id} product={product} onAddToCart={addToCart} />
+                    ))
+                  ) : (
+                    !loading && (
+                      <div className="no-results">
+                        <p>No products found matching "<strong>{searchTerm}</strong>"</p>
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             } />
-
-            {/* Cart Route: Displays shopping cart details and management */}
+            
             <Route path="/cart" element={
               <Cart 
                 cartItems={cart} 
@@ -124,8 +143,7 @@ function App() {
                 onUpdateQuantity={updateQuantity} 
               />
             } />
-
-            {/* Product Detail Route: Dynamic route for individual product views */}
+            
             <Route path="/product/:id" element={
               <ProductDetail onAddToCart={addToCart} />
             } />

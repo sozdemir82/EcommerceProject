@@ -4,25 +4,36 @@ import "./Navbar.scss";
 
 /**
  * Navbar Component
- * Features Link components for seamless client-side navigation.
+ * Contains the logo, search bar, and cart navigation.
+ * @param {number} cartCount - Total quantity of items in the cart
+ * @param {string} searchTerm - Current search input value
+ * @param {Function} onSearchChange - Function to handle input changes
  */
-const Navbar = ({ cartCount }) => {
+const Navbar = ({ cartCount, searchTerm, onSearchChange }) => {
   return (
     <nav className="navbar">
-      <div className="navbar-container">
-        <div className="brand">
-          <Link to="/">E-COMMERCE</Link>
+      <div className="container nav-content">
+        <Link to="/" className="logo">
+          PREMIUM<span>STORE</span>
+        </Link>
+
+        {/* Search Bar Section */}
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
         </div>
-        <ul className="nav-menu">
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/cart" className="cart-link">
-              Cart <span className="cart-count">({cartCount})</span>
-            </Link>
-          </li>
-        </ul>
+
+        <div className="nav-links">
+          <Link to="/" className="nav-item">Shop</Link>
+          <Link to="/cart" className="nav-item cart-link">
+            Cart
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </Link>
+        </div>
       </div>
     </nav>
   );
