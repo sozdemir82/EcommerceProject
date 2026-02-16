@@ -1,8 +1,12 @@
 @use "../../variables" as vars;
 
+/**
+ * Navbar Styles
+ * Refined for full responsiveness, ensuring search bar remains accessible on mobile.
+ */
 .navbar {
   background-color: white;
-  padding: 1.2rem 0;
+  padding: 1rem 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
@@ -13,33 +17,51 @@
     justify-content: space-between;
     align-items: center;
     gap: 1.5rem;
+    flex-wrap: wrap; // Allows items to wrap on smaller screens
   }
 
   .logo {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 800;
     text-decoration: none;
     color: vars.$secondary-color;
-    span { color: vars.$primary-color; }
+    white-space: nowrap;
+
+    span {
+      color: vars.$primary-color;
+    }
   }
 
+  /* Search Bar Container - Optimized for responsiveness */
   .search-container {
     flex: 1;
-    max-width: 400px;
+    min-width: 200px; // Ensures it doesn't get too small
+    max-width: 500px;
+    order: 2; // Default order in desktop
+
     input {
       width: 100%;
       padding: 0.6rem 1.2rem;
       border-radius: 20px;
       border: 1px solid #e0e0e0;
+      background-color: #f8f9fa;
+      font-size: 0.9rem;
+      transition: all vars.$transition-fast;
       outline: none;
-      &:focus { border-color: vars.$primary-color; }
+
+      &:focus {
+        background-color: white;
+        border-color: vars.$primary-color;
+        box-shadow: 0 0 0 4px rgba(vars.$primary-color, 0.1);
+      }
     }
   }
 
   .nav-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 1.2rem;
     align-items: center;
+    order: 3;
 
     .category-select {
       padding: 0.5rem;
@@ -47,35 +69,75 @@
       border: 1px solid #ddd;
       background: white;
       font-weight: 600;
+      font-size: 0.85rem;
       color: vars.$secondary-color;
       cursor: pointer;
       outline: none;
 
-      &:focus { border-color: vars.$primary-color; }
+      &:focus {
+        border-color: vars.$primary-color;
+      }
     }
 
     .nav-item {
       text-decoration: none;
       color: vars.$secondary-color;
       font-weight: 600;
-    }
+      font-size: 0.95rem;
+      transition: color vars.$transition-fast;
 
-    .cart-link {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      &:hover {
+        color: vars.$primary-color;
+      }
+
+      &.cart-link {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
     }
 
     .cart-badge {
       background-color: vars.$primary-color;
       color: white;
-      font-size: 0.75rem;
-      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.4rem;
       border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
     }
   }
 }
 
+/**
+ * Responsive Adjustments
+ * On mobile, we stack the search bar below the logo and cart for better UX.
+ */
 @media (max-width: 768px) {
-  .search-container { display: none; }
+  .navbar {
+    padding: 0.8rem 0;
+
+    .nav-content {
+      display: grid;
+      grid-template-columns: 1fr auto; // Logo on left, Links on right
+      gap: 1rem;
+    }
+
+    .search-container {
+      grid-column: span 2; // Search bar takes full width
+      max-width: 100%;
+      order: 4; // Moves below the logo and cart
+      
+      input {
+        padding: 0.8rem 1.2rem; // Slightly larger touch target for mobile
+      }
+    }
+
+    .nav-links {
+      .category-select {
+        max-width: 110px; // Prevents select box from pushing cart out
+      }
+    }
+  }
 }

@@ -1,35 +1,39 @@
-@use "variables" as vars;
+@use "./variables" as vars;
 
-/* Global Reset */
+/** * Global Reset & Layout
+ */
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
-.App {
-  font-family: vars.$font-main;
-  background-color: #f8f9fa;
-  min-height: 100vh;
-  color: vars.$primary-color;
+body {
+  background-color: #f4f7f9;
+  color: vars.$secondary-color;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+}
 
-  .container {
-    max-width: vars.$container-width;
-    margin: 0 auto;
-    padding: 2rem;
-    
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-  }
+// Navbar, Footer ve İçerik sayfalarını hizalayan ana sınıf
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem; // Navbar ve sayfa kenar boşluklarını korur
+}
 
-  h1 {
-    text-align: center;
-    color: vars.$primary-color;
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-  }
+main {
+  min-height: calc(100vh - 80px);
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+/** * Product Grid - Ana sayfa ürün listesi için
+ * 33.png'deki dev boşlukları bitirir, ürünleri kutular
+ */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  width: 100%;
 }

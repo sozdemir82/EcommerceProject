@@ -1,38 +1,40 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "./ProductCard.scss";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './ProductCard.scss';
 
 /**
  * ProductCard Component
- * Now supports navigation to detailed product page.
+ * Fixed layout to prevent excessive white space and improve visual hierarchy.
  */
 const ProductCard = ({ product, onAddToCart }) => {
   return (
     <div className="product-card">
-      <Link to={`/product/${product.id}`} className="product-image-link">
-        <img 
-          src={product.image_url || "https://via.placeholder.com/150"} 
-          alt={product.name} 
-          className="product-image" 
-        />
-      </Link>
-      
-      <div className="product-info">
-        <h3>
-          <Link to={`/product/${product.id}`} className="product-title-link">
-            {product.name}
-          </Link>
-        </h3>
-        <p className="description">{product.description}</p>
-        <div className="card-footer">
-          <span className="price">${product.price}</span>
-          <button 
-            className="add-to-cart-btn"
-            onClick={() => onAddToCart(product)}
-          >
-            Add to Cart
-          </button>
+      <Link to={`/product/${product.id}`} className="product-link">
+        <div className="product-image">
+          {/* Using a placeholder if image is missing, but with better styling */}
+          <div className="img-fallback">{product.name.charAt(0)}</div>
         </div>
+        
+        <div className="product-info">
+          <span className="product-category">{product.category}</span>
+          <h3 className="product-title">{product.name}</h3>
+          <p className="product-description">
+            {product.description?.substring(0, 60)}...
+          </p>
+        </div>
+      </Link>
+
+      <div className="product-footer">
+        <span className="product-price">${product.price.toFixed(2)}</span>
+        <button 
+          className="add-btn" 
+          onClick={(e) => {
+            e.preventDefault();
+            onAddToCart(product);
+          }}
+        >
+          Add to Cart
+        </button>
       </div>
     </div>
   );
