@@ -1,7 +1,5 @@
 @use "./variables" as vars;
 
-/** * Global Reset & Layout
- */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -15,11 +13,10 @@ body {
   line-height: 1.6;
 }
 
-// Navbar, Footer ve İçerik sayfalarını hizalayan ana sınıf
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem; // Navbar ve sayfa kenar boşluklarını korur
+  padding: 0 1.5rem;
 }
 
 main {
@@ -28,12 +25,47 @@ main {
   padding-bottom: 4rem;
 }
 
-/** * Product Grid - Ana sayfa ürün listesi için
- * 33.png'deki dev boşlukları bitirir, ürünleri kutular
- */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
   width: 100%;
+}
+
+// --- İzole Admin Stilleri (Dokunulmaz Alan) ---
+.admin-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  
+  .admin-box {
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 500px;
+
+    h2 { color: #4A6984; margin-bottom: 1.5rem; text-align: center; }
+
+    .form-group {
+      margin-bottom: 1rem;
+      label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem; color: #555; }
+      input, textarea {
+        width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;
+        &:focus { outline: none; border-color: #4A6984; }
+      }
+    }
+
+    .form-row { display: flex; gap: 1rem; .form-group { flex: 1; } }
+
+    .admin-btn {
+      width: 100%; padding: 1rem; background: #4A6984; color: white; border: none; border-radius: 6px;
+      font-weight: bold; cursor: pointer; transition: opacity 0.2s;
+      &:hover { opacity: 0.9; }
+    }
+
+    .admin-status { margin-top: 1rem; text-align: center; font-weight: 600; color: #2ecc71; }
+    .admin-back { display: block; text-align: center; margin-top: 1.5rem; color: #888; text-decoration: none; font-size: 0.9rem; }
+  }
 }
