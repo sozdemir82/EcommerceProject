@@ -1,54 +1,57 @@
-from flask import Flask, jsonify
+# File Location: /backend/app.py
+# FIX: Standardized routes to ensure Frontend can find the API.
+
+from flask import Flask, request, jsonify
 from flask_cors import CORS
+from models import db, Product
+from routes import admin_bp
 
-app = Flask(__name__)
-# Enable CORS for frontend communication
-CORS(app)
+def create_app():
+    app = Flask(__name__)
+    
+    # Enable CORS so React (port 3000) can talk to Flask (port 5000)
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# Standardized product data with clear category names
-products = [
-    {
-        "id": 1,
-        "name": "Wireless Headphones",
-        "description": "Noise-canceling Bluetooth headphones",
-        "price": 199.99,
-        "category": "Electronics",
-        "category_id": 1
-    },
-    {
-        "id": 2,
-        "name": "Smartphone X",
-        "description": "6.7 inch OLED display, 128GB",
-        "price": 999,
-        "category": "Electronics",
-        "category_id": 1
-    },
-    {
-        "id": 3,
-        "name": "Cotton T-Shirt",
-        "description": "Organic cotton, slim fit",
-        "price": 29.5,
-        "category": "Clothing",
-        "category_id": 2
-    },
-    {
-        "id": 4,
-        "name": "Modern Coffee Table",
-        "description": "Minimalist wooden design",
-        "price": 145,
-        "category": "Furniture",
-        "category_id": 3
-    }
-]
+    # Database Configuration
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-@app.route('/api/products', methods=['GET'])
-def get_products():
-    """
-    Returns the list of products in JSON format.
-    Standardizes the response for the frontend application.
-    """
-    return jsonify(products)
+    # Initialize Database
+    db.init_app(app)
+
+    # Register Admin Blueprint
+    app.register_blueprint(admin_bp)
+
+    # --- MAIN SEARCH ROUTE (The one React is looking for) ---
+    @app.route('/api/products', methods=['GET'])
+    def get_products():
+        """
+        Main endpoint for the storefront. 
+        Supports category filtering and returns all products by default.
+        """
+        try:
+            category_query = request.args.get('category', '').strip()
+            
+            if category_query:
+                # Filter by category if query exists
+                products = Product.query.filter(Product.category.ilike(f"%{category_query}%")).all()
+            else:
+                # Return all products if no category is specified
+                products = Product.query.all()
+                
+            return jsonify([p.to_dict() for p in products]), 200
+            
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
+
+    # Database synchronization
+    with app.app_context():
+        db.create_all()
+        print(">> Database Tables Ready.")
+
+    return app
 
 if __name__ == '__main__':
-    # Run the Flask server on port 5000 with debug mode enabled
-    app.run(debug=True, port=5000)
+    app = create_app()
+    # Explicitly setting host and port to avoid 'Not Found' errors
+    app.run(debug=True, host='127.0.0.1', port=5000)
