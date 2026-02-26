@@ -15,6 +15,10 @@ import Login from "./pages/Login/Login";
 import { getProducts } from "./services/api";
 import "./App.scss";
 
+/**
+ * App Component
+ * Global controller for state management and routing.
+ */
 function App() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,7 +36,7 @@ function App() {
     localStorage.setItem("shopping_cart", JSON.stringify(cart));
   }, [cart]);
 
-  // Initial Data Fetch
+  // Initial Data Fetch from Backend
   useEffect(() => {
     const fetchProductsData = async () => {
       try {
@@ -49,18 +53,25 @@ function App() {
     fetchProductsData();
   }, []);
 
-  // Derived State: Categories and Filtering
+  // Derived State: Categories
   const categories = products.length > 0 
     ? [...new Set(products.map(p => p.category))].filter(Boolean) 
     : [];
 
+  // PROFESYONEL FILTRELEME MANTIGI (Search & Category)
   const filteredProducts = products.filter((product) => {
+    // Category match check
     const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Search match check (Handle Turkish characters and case sensitivity)
+    const searchLower = searchTerm.toLocaleLowerCase('tr-TR');
+    const productNameLower = (product.name || "").toLocaleLowerCase('tr-TR');
+    const matchesSearch = productNameLower.includes(searchLower);
+
     return matchesCategory && matchesSearch;
   });
 
-  // Cart Actions
+  // Cart Management Functions
   const addToCart = (product) => {
     setCart((prevCart) => {
       const isItemInCart = prevCart.find((item) => item.id === product.id);
@@ -90,6 +101,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        {/* Navbar component with all necessary search and category props */}
         <Navbar 
           cartCount={cart.reduce((sum, item) => sum + (item.quantity || 1), 0)} 
           searchTerm={searchTerm}

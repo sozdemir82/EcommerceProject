@@ -29,9 +29,12 @@ const ProductDetail = ({ onAddToCart }) => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        // Fetching all products from API (Optimized: in a real app, you'd fetch by ID)
+        // Fetching all products from API
         const products = await getProducts();
-        const foundProduct = products.find((p) => p.id === parseInt(id));
+        
+        // FIX: Compare IDs as strings to avoid type mismatch (int vs string)
+        const foundProduct = products.find((p) => String(p.id) === String(id));
+        
         setProduct(foundProduct);
       } catch (error) {
         console.error("Error fetching product details:", error);
@@ -46,7 +49,17 @@ const ProductDetail = ({ onAddToCart }) => {
   if (loading) return <div className="status-message container">Loading product details...</div>;
   
   // Render error state if the product is not found in the database
-  if (!product) return <div className="error-message container">Product not found!</div>;
+  if (!product) {
+    return (
+      <div className="error-message container" style={{ textAlign: "center", marginTop: "50px" }}>
+        <h2>Product not found!</h2>
+        <p>The requested product could not be retrieved from the database.</p>
+        <button className="back-btn" onClick={() => navigate("/")} style={{ marginTop: "20px" }}>
+          &larr; Return to Store
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="product-detail-container container">
@@ -68,7 +81,7 @@ const ProductDetail = ({ onAddToCart }) => {
         <div className="info-section">
           <span className="badge">Premium Choice</span>
           <h1>{product.name}</h1>
-          <p className="price">${product.price}</p>
+          <p className="price">${Number(product.price).toFixed(2)}</p>
           
           <div className="divider"></div>
           
