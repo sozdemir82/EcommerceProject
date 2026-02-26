@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProducts } from "../../services/api";
+// Path updated: we need to go up two levels to reach services from pages/ProductDetail
+import { getProducts } from "../../services/api"; 
 import "./ProductDetail.scss";
 
 /**
  * ProductDetail Component
  * Displays detailed information about a specific product.
  * Uses dynamic routing parameters to identify and fetch the correct product.
- * * @param {Function} onAddToCart - Global function to add the current product to the cart
+ * @param {Function} onAddToCart - Global function to add the current product to the cart
  */
 const ProductDetail = ({ onAddToCart }) => {
   // Extract the product ID from the URL parameters

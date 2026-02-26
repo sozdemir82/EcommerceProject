@@ -1,0 +1,23 @@
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.status-message, .error-message {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+}
+
+.error-message {
+  color: #d9534f;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 5rem;
+  color: #777;
+}
